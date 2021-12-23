@@ -51,7 +51,7 @@ namespace algLab4
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(103, 82);
+            this.button3.Location = new System.Drawing.Point(112, 82);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 51);
             this.button3.TabIndex = 6;
@@ -61,7 +61,7 @@ namespace algLab4
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(103, 3);
+            this.label1.Location = new System.Drawing.Point(112, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(210, 73);
             this.label1.TabIndex = 5;
@@ -70,7 +70,7 @@ namespace algLab4
             // 
             this.button2.Location = new System.Drawing.Point(3, 82);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 51);
+            this.button2.Size = new System.Drawing.Size(103, 51);
             this.button2.TabIndex = 4;
             this.button2.Text = "Удалить вершину";
             this.button2.UseVisualStyleBackColor = true;
@@ -80,9 +80,9 @@ namespace algLab4
             // 
             this.button1.Location = new System.Drawing.Point(3, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 73);
+            this.button1.Size = new System.Drawing.Size(103, 73);
             this.button1.TabIndex = 3;
-            this.button1.Text = "Найти эйлеров путь";
+            this.button1.Text = "Найти точки сочленения";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 

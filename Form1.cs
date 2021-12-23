@@ -31,21 +31,12 @@ namespace algLab4
             private Point p2;
             
             private Pen defaultPen = new Pen(Color.Black, 2);
-            private Pen spanningPen = new Pen(Color.Red, 6);        // для остовного дерева
+            private Pen selectedPen = new Pen(Color.Red, 6);        // для выделения
 
-            private bool is_spanning = false;
             public bool is_gone = false;
             public bool is_printed = false;
             private List<Ver> vers;
 
-            public void make_spanning()
-            {
-                is_spanning = true;
-            }
-            public void make_default()
-            {
-                is_spanning = false;
-            }
             public bool is_Connected(Ver ver)
             {
                 return vers.Contains(ver);
@@ -59,9 +50,6 @@ namespace algLab4
             
             public void paint(Graphics paintForm)
             {
-                if (is_spanning == true)
-                    paintForm.DrawLine(spanningPen, p1, p2);
-                else
                     paintForm.DrawLine(defaultPen, p1, p2);
             }
             public Edge(Point p1, Point p2, Ver ver1, Ver ver2, Graphics paintForm)
@@ -100,7 +88,6 @@ namespace algLab4
             public List<Edge> edges = new List<Edge>();
             public List<Ver> neighbours = new List<Ver>();
 
-            public bool is_spanned = false;
             public bool is_visited = false;
 
             public bool is_articulation = false;
@@ -225,17 +212,6 @@ namespace algLab4
             {
                 return neighbours.Contains(ver);
             }
-            public void span(Ver ver, Graphics paintForm)
-            {
-                foreach (Edge edge in edges)
-                {
-                    if (edge.are_Connected(this, ver) && ver.is_spanned == false)
-                    {
-                        edge.make_spanning();
-                        ver.is_spanned = true;
-                    }
-                }
-            }
 
             public Ver(int x, int y, Graphics paintForm, string a)
             {
@@ -270,7 +246,7 @@ namespace algLab4
                     if (storage[i] != null)
                         del = del + 1;
 
-                Ver[] tempStorage = new Ver[del];   // here we'll put elements that should remain
+                Ver[] tempStorage = new Ver[del];           // here we'll put elements that should remain
 
                 int j = 0;
                 for (int i = 0; i < size; i++)
@@ -372,7 +348,7 @@ namespace algLab4
                     storage[i].focus(paintForm);             // выделили вершину, на которую нажали
 
                     int j = 0;
-                    found = false;                  // проверка, есть ли ещё выделенные вершины
+                    found = false;                          // проверка, есть ли ещё выделенные вершины
                     while (found == false && j < size)
                     {
                         if (i != j && storage[j].focusCheck() == true)
@@ -384,7 +360,7 @@ namespace algLab4
                     }
 
                     if (j < size)
-                    {                               // нужно создать ребро
+                    {                                       // нужно создать ребро
 
                         storage[i].unfocus();
                         storage[j].unfocus();
@@ -417,77 +393,6 @@ namespace algLab4
                 if (count != 0)
                     foreach (Ver circle in storage)
                         circle.paint(paintForm);
-            }
-
-            public void paintSpan(List<Ver> L, Graphics paintForm)
-            {
-                for (int i = 0; i < L.Count - 1; i++)
-                    for (int j = i + 1; j < L.Count; j++)
-                        if (L[i].neighbourCheck(L[j]) == true)
-                        {
-                            L[i].span(L[j], paintForm);
-                            paint(paintForm);
-                            Thread.Sleep(500);
-                        }
-                        else
-                        {
-                            L[i].is_spanned = true;
-                            continue;
-                        }
-            }
-
-            public void inWidth(Ver ver, List<Ver> Och, List<Ver> L)
-            {
-                Och.Remove(ver);
-
-                if (L.Contains(ver) == false)
-                {
-                    L.Add(ver);
-                }
-                else
-                    return;
-
-                foreach (Ver v in ver.neighbours)
-                {
-                    if (L.Contains(v) == false)
-                        Och.Add(v);
-                }
-
-
-            }
-            public bool inWidthPrep(Graphics paintForm)
-            {
-                if (count == 0)
-                    return false;
-
-                List<Ver> Och = new List<Ver>();
-                List<Ver> L = new List<Ver>();
-
-                bool found = false;
-                for (int i = 0; i < size; i++)
-                    if (storage[i].focusCheck() == true)
-                    {
-                        inWidth(storage[i], Och, L);
-                        while (Och.Count != 0)
-                            inWidth(Och[0], Och, L);
-
-                        found = true;
-                        break;
-                    }
-
-                if (found == false)
-                {
-                    inWidth(storage[0], Och, L);
-                    while (Och.Count != 0)
-                        inWidth(Och[0], Och, L);
-                }
-                if (L.Count != count)
-                {
-                    MessageBox.Show("Граф несвязный.");
-                    return false;
-                }
-                else
-                    return true;
             }
 
             public void inDepth(Stack<Ver> stec, List<Ver> vis)
@@ -544,11 +449,17 @@ namespace algLab4
                             if (v.is_visited == false)
                                 stec.Push(v);
                 }
-                //paintSpan(vis, paintForm);
+
+                if (this.count != vis.Count)
+                {
+                    MessageBox.Show("Граф несвязный.");
+                    return "";
+                }
 
                 foreach (Ver v in storage)
                     v.is_visited = false;
 
+                int count = 0;
                 for (int i = 0; i < vis.Count; i++)
                 {
                     storage[i].is_visible = false;
@@ -565,6 +476,7 @@ namespace algLab4
                             if (l.Count != (vis.Count - 1))
                             {
                                 storage[i].is_articulation = true;
+                                count++;
                                 break;
                             }    
                         }
@@ -573,10 +485,8 @@ namespace algLab4
                 }
                 paint(paintForm);
 
-                string path = vis[0].name;
-                for (int i = 1; i < vis.Count - 1; i++)
-                    path += " - " + vis[i].name;
-                return path;
+
+                return "Всего точек сочленения " + count.ToString();
             }
         }
         ///////// ended up for the storages and Ver classes
@@ -623,6 +533,7 @@ namespace algLab4
             storage = new StorService();
             a = 1;
             ActiveForm.Invalidate();
+            label1.Text = "";
         }
     }
 }
