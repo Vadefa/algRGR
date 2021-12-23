@@ -103,10 +103,13 @@ namespace algLab4
             public bool is_spanned = false;
             public bool is_visited = false;
 
+            public bool is_articulation = false;
+            public bool is_visible = true;
+
             //drawing method
             public void paint(Graphics paintForm)
             {
-                if (is_focused == true)
+                if (is_focused == true || is_articulation == true)
                 {
                     paintForm.DrawEllipse(focusedPen, rect);
                     paintForm.FillEllipse(focusedBrush, rect);
@@ -487,6 +490,32 @@ namespace algLab4
                     return true;
             }
 
+            public void inDepth(Stack<Ver> stec, List<Ver> vis)
+            {
+                Ver ver;
+                while (stec.Count != 0)
+                {
+                    ver = stec.Pop();
+                    ver.is_visited = true;
+                    if (vis.Contains(ver) == false)
+                        vis.Add(ver);
+                    bool has_neighbours = false;
+                    foreach (Ver v in ver.neighbours)
+                    {
+                        if (v.is_visited == false && v.is_visible == true)
+                        {
+                            has_neighbours = true;
+                            break;
+                        }
+                    }
+                    if (has_neighbours == true)
+                        foreach (Ver v in ver.neighbours)
+                            if (v.is_visited == false && v.is_visible == true)
+                                stec.Push(v);
+                }
+                foreach (Ver v in storage)
+                    v.is_visited = false;
+            }
 
             public string inDepthSearch(Graphics paintForm)
             {
@@ -494,13 +523,13 @@ namespace algLab4
                 List<Ver> vis = new List<Ver>();
                 stec.Push(storage[0]);
 
-                List<Ver> paintList = new List<Ver>();
                 Ver ver;
                 while (stec.Count != 0)
                 {
                     ver = stec.Pop();
                     ver.is_visited = true;
-                    vis.Add(ver);
+                    if (vis.Contains(ver) == false)
+                        vis.Add(ver);
                     bool has_neighbours = false;
                     foreach (Ver v in ver.neighbours)
                     {
@@ -515,12 +544,37 @@ namespace algLab4
                             if (v.is_visited == false)
                                 stec.Push(v);
                 }
-                paintSpan(vis, paintForm);
+                //paintSpan(vis, paintForm);
 
+                foreach (Ver v in storage)
+                    v.is_visited = false;
+
+                for (int i = 0; i < vis.Count; i++)
+                {
+                    storage[i].is_visible = false;
+                    for (int j = 0; j < vis.Count; j++)
+                    {
+                        if (i == j)
+                            continue;
+                        else
+                        {
+                            Stack<Ver> st = new Stack<Ver>();
+                            List<Ver> l = new List<Ver>();
+                            st.Push(storage[j]);
+                            inDepth(st, l);
+                            if (l.Count != (vis.Count - 1))
+                            {
+                                storage[i].is_articulation = true;
+                                break;
+                            }    
+                        }
+                    }
+                    storage[i].is_visible = true;
+                }
+                paint(paintForm);
 
                 string path = vis[0].name;
-
-                for (int i = 1; i < vis.Count; i++)
+                for (int i = 1; i < vis.Count - 1; i++)
                     path += " - " + vis[i].name;
                 return path;
             }
