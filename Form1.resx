@@ -57,4 +57,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Автор: Сухинин Вадим Викторович, ПРО-227. Вариант 20.
+Формулировка адания: вершина графа называется точкой сочленения, если ее удаление приводит к увеличению числа компонентов связности.
+Найдите все точки сочленения данного графа.
+Разработайте алгоритм решения этой задачи и напишите программу.</value>
+  </data>
 </root>

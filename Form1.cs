@@ -424,6 +424,10 @@ namespace algLab4
 
             public string inDepthSearch(Graphics paintForm)
             {
+                foreach (Ver v in storage)                  // занулим точки сочленения перед поиском новых точек
+                    v.is_articulation = false;
+
+
                 Stack<Ver> stec = new Stack<Ver>();
                 List<Ver> vis = new List<Ver>();
                 stec.Push(storage[0]);
