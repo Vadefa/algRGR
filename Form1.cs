@@ -59,7 +59,7 @@ namespace algLab4
             
             public void paint(Graphics paintForm)
             {
-                if (is_printed == true)
+                if (is_spanning == true)
                     paintForm.DrawLine(spanningPen, p1, p2);
                 else
                     paintForm.DrawLine(defaultPen, p1, p2);
@@ -416,22 +416,22 @@ namespace algLab4
                         circle.paint(paintForm);
             }
 
-            //public void paintSpan(List<Ver> L, Graphics paintForm)
-            //{
-            //    for (int i = 0; i < L.Count - 1; i++)
-            //        for (int j = i + 1; j < L.Count; j++)
-            //            if (L[i].neighbourCheck(L[j]) == true)
-            //            {
-            //                L[i].span(L[j], paintForm);
-            //                paint(paintForm);
-            //                Thread.Sleep(500);
-            //            }
-            //            else
-            //            {
-            //                L[i].is_spanned = true;
-            //                continue;
-            //            }
-            //}
+            public void paintSpan(List<Ver> L, Graphics paintForm)
+            {
+                for (int i = 0; i < L.Count - 1; i++)
+                    for (int j = i + 1; j < L.Count; j++)
+                        if (L[i].neighbourCheck(L[j]) == true)
+                        {
+                            L[i].span(L[j], paintForm);
+                            paint(paintForm);
+                            Thread.Sleep(500);
+                        }
+                        else
+                        {
+                            L[i].is_spanned = true;
+                            continue;
+                        }
+            }
 
             public void inWidth(Ver ver, List<Ver> Och, List<Ver> L)
             {
@@ -498,7 +498,9 @@ namespace algLab4
                 Ver ver;
                 while (stec.Count != 0)
                 {
-                    ver = stec.Peek();
+                    ver = stec.Pop();
+                    ver.is_visited = true;
+                    vis.Add(ver);
                     bool has_neighbours = false;
                     foreach (Ver v in ver.neighbours)
                     {
@@ -509,50 +511,18 @@ namespace algLab4
                         }
                     }
                     if (has_neighbours == true)
-                    {
                         foreach (Ver v in ver.neighbours)
-                        {
-                            if (vis.Contains(v) == false)
-                            {
+                            if (v.is_visited == false)
                                 stec.Push(v);
-                            }
-                        }
-                        ver.is_visited = true;
-                        vis.Add(stec.Pop());
-                    }
-                    //else
-                    //{
-                    //    ver = stec.Pop();
-                    //    vis.Add(ver);
-                    //    paintList.Add(ver);
-                    //}
                 }
-                for(int i = 0; i < vis.Count - 1; i++)
-                {
-                    vis[i].edgePrinted(vis[i + 1]);
-                    paint(paintForm);
-                    Thread.Sleep(750);
-                }
+                paintSpan(vis, paintForm);
+
 
                 string path = vis[0].name;
 
                 for (int i = 1; i < vis.Count; i++)
                     path += " - " + vis[i].name;
                 return path;
-
-                //for(int i = paintList.Count - 1; i >=1; i--)
-                //{
-                //    paintList[i - 1].edgePrinted(paintList[i]);
-                //    paint(paintForm);
-                //    Thread.Sleep(750);
-                //}
-
-                //string path = ce.Pop().name;
-                //count = ce.Count;
-
-                //for (int i = 0; i < count; i++)
-                //    path += " - " + ce.Pop().name;
-                //return path;
             }
         }
         ///////// ended up for the storages and Ver classes
